@@ -80,8 +80,6 @@ class utils {
      * @return array Array of reference concepts with sources.
      */
     public static function get_references(int $cmid): array {
-        global $USER;
-
         $content = self::get_page_content($cmid);
 
         if (empty(trim($content))) {

@@ -66,8 +66,6 @@ class get_references extends external_api {
      * @return array Array containing concepts with reference links.
      */
     public static function execute(int $cmid): array {
-        global $USER;
-
         // Step 1: Validate parameters.
         $params = self::validate_parameters(self::execute_parameters(), [
             'cmid' => $cmid,
