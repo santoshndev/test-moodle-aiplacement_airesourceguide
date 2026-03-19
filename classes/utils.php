@@ -184,14 +184,14 @@ class utils {
                "(max 25 words)\n" .
                "- suggested_sources: An array of 2 to 4 source types that are " .
                "most relevant for this topic. Choose from: " .
-               "academic, video, encyclopedia, documentation, news, books, interactive\n\n" .
+               "academic, video, encyclopedia, documentation, news, books\n\n" .
                "Choose source types intelligently based on the subject matter. " .
                "For example:\n" .
-               "- Programming topics: documentation, video, interactive\n" .
+               "- Programming topics: documentation, video, academic\n" .
                "- Science topics: academic, video, encyclopedia\n" .
                "- History topics: encyclopedia, books, video\n" .
                "- Business topics: news, academic, books\n" .
-               "- Mathematics topics: video, interactive, academic\n\n" .
+               "- Mathematics topics: video, academic, encyclopedia\n\n" .
                "IMPORTANT: Respond ONLY with valid JSON in this exact format, " .
                "no additional text or markdown:\n" .
                "{\"concepts\": [{\"topic\": \"...\", \"search_query\": \"...\", " .
