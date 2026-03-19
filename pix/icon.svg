@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2196F3"/>
+      <stop offset="100%" style="stop-color:#0D47A1"/>
+    </linearGradient>
+    <linearGradient id="glassCircle" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#42A5F5"/>
+      <stop offset="100%" style="stop-color:#1565C0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100" height="100" rx="22" fill="url(#bg)"/>
+
+  <!-- Book left page -->
+  <rect x="14" y="28" width="32" height="44" rx="3" fill="white" opacity="0.95"/>
+  <!-- Book right page -->
+  <rect x="54" y="28" width="32" height="44" rx="3" fill="white" opacity="0.85"/>
+  <!-- Book spine -->
+  <rect x="44" y="28" width="12" height="44" rx="2" fill="#90CAF9"/>
+  <!-- Spine center line -->
+  <rect x="49" y="28" width="2" height="44" fill="#64B5F6" opacity="0.6"/>
+
+  <!-- Left page lines -->
+  <rect x="19" y="38" width="22" height="3" rx="1.5" fill="#2196F3" opacity="0.3"/>
+  <rect x="19" y="46" width="22" height="3" rx="1.5" fill="#2196F3" opacity="0.3"/>
+  <rect x="19" y="54" width="14" height="3" rx="1.5" fill="#2196F3" opacity="0.3"/>
+
+  <!-- Right page lines -->
+  <rect x="59" y="38" width="22" height="3" rx="1.5" fill="#2196F3" opacity="0.3"/>
+  <rect x="59" y="46" width="22" height="3" rx="1.5" fill="#2196F3" opacity="0.3"/>
+  <rect x="59" y="54" width="14" height="3" rx="1.5" fill="#2196F3" opacity="0.3"/>
+
+  <!-- Magnifying glass outer ring -->
+  <circle cx="64" cy="64" r="13" fill="url(#glassCircle)"/>
+  <!-- Magnifying glass inner glass -->
+  <circle cx="64" cy="64" r="9" fill="white" opacity="0.15"/>
+  <!-- Magnifying glass ring stroke -->
+  <circle cx="64" cy="64" r="13" fill="none" stroke="white" stroke-width="3"/>
+  <!-- Shine inside lens -->
+  <circle cx="59" cy="59" r="3.5" fill="white" opacity="0.25"/>
+
+  <!-- Handle -->
+  <line x1="74" y1="74" x2="84" y2="84" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+
+  <!-- AI sparkle -->
+  <g transform="translate(83,17)" fill="#FFD600">
+    <polygon points="0,-7 1.8,-1.8 7,0 1.8,1.8 0,7 -1.8,1.8 -7,0 -1.8,-1.8"/>
+  </g>
+</svg>
