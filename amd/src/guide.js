@@ -103,7 +103,7 @@ define([
         // Check AI policy status first.
         Ajax.call([{
             methodname: 'core_ai_get_policy_status',
-            args: {}
+            args: {userid: M.cfg.userId}
         }])[0].then(function(result) {
             if (result.status) {
                 // Policy accepted, proceed.
@@ -118,10 +118,7 @@ define([
                 });
             }
             return;
-        }).catch(function() {
-            // If policy check fails, try to proceed anyway.
-            openDrawer();
-        });
+        }).catch(Notification.exception);
     }
 
     /**
@@ -134,19 +131,26 @@ define([
             Str.get_strings([
                 {key: 'aipolicy_title', component: 'aiplacement_airesourceguide'},
                 {key: 'aipolicy_message', component: 'aiplacement_airesourceguide'},
+                {key: 'aipolicy_point1', component: 'aiplacement_airesourceguide'},
+                {key: 'aipolicy_point2', component: 'aiplacement_airesourceguide'},
+                {key: 'aipolicy_point3', component: 'aiplacement_airesourceguide'},
                 {key: 'accept', component: 'core'},
                 {key: 'cancel', component: 'core'}
             ]).then(function(strings) {
+                var message = strings[1] + '<br>' +
+                    '1. ' + strings[2] + '<br>' +
+                    '2. ' + strings[3] + '<br>' +
+                    '3. ' + strings[4];
                 Notification.confirm(
                     strings[0],
-                    strings[1],
-                    strings[2],
-                    strings[3],
+                    message,
+                    strings[5],
+                    strings[6],
                     function() {
                         // User accepted.
                         Ajax.call([{
                             methodname: 'core_ai_set_policy_status',
-                            args: {}
+                            args: {contextid: M.cfg.contextid, userid: M.cfg.userId}
                         }])[0].then(function() {
                             resolve();
                             return;
