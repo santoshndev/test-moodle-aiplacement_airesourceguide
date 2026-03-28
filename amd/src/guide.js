@@ -108,16 +108,14 @@ define([
             if (result.status) {
                 // Policy accepted, proceed.
                 openDrawer();
-            } else {
-                // Show policy acceptance, then proceed.
-                showPolicyModal().then(function() {
-                    openDrawer();
-                    return;
-                }).catch(function() {
-                    // User declined policy, do nothing.
-                });
+                return;
             }
-            return;
+            // Show policy acceptance, then proceed.
+            return showPolicyModal().then(function() {
+                openDrawer();
+            }).catch(function() {
+                // User declined policy, do nothing.
+            });
         }).catch(Notification.exception);
     }
 
@@ -127,20 +125,20 @@ define([
      * @return {Promise} Resolves when user accepts, rejects when declined.
      */
     function showPolicyModal() {
-        return new Promise(function(resolve, reject) {
-            Str.get_strings([
-                {key: 'aipolicy_title', component: 'aiplacement_airesourceguide'},
-                {key: 'aipolicy_message', component: 'aiplacement_airesourceguide'},
-                {key: 'aipolicy_point1', component: 'aiplacement_airesourceguide'},
-                {key: 'aipolicy_point2', component: 'aiplacement_airesourceguide'},
-                {key: 'aipolicy_point3', component: 'aiplacement_airesourceguide'},
-                {key: 'accept', component: 'core'},
-                {key: 'cancel', component: 'core'}
-            ]).then(function(strings) {
-                var message = strings[1] + '<br>' +
-                    '1. ' + strings[2] + '<br>' +
-                    '2. ' + strings[3] + '<br>' +
-                    '3. ' + strings[4];
+        return Str.get_strings([
+            {key: 'aipolicy_title', component: 'aiplacement_airesourceguide'},
+            {key: 'aipolicy_message', component: 'aiplacement_airesourceguide'},
+            {key: 'aipolicy_point1', component: 'aiplacement_airesourceguide'},
+            {key: 'aipolicy_point2', component: 'aiplacement_airesourceguide'},
+            {key: 'aipolicy_point3', component: 'aiplacement_airesourceguide'},
+            {key: 'accept', component: 'core'},
+            {key: 'cancel', component: 'core'}
+        ]).then(function(strings) {
+            var message = strings[1] + '<br>' +
+                '1. ' + strings[2] + '<br>' +
+                '2. ' + strings[3] + '<br>' +
+                '3. ' + strings[4];
+            return new Promise(function(resolve, reject) {
                 Notification.confirm(
                     strings[0],
                     message,
@@ -151,17 +149,11 @@ define([
                         Ajax.call([{
                             methodname: 'core_ai_set_policy_status',
                             args: {contextid: M.cfg.contextid, userid: M.cfg.userId}
-                        }])[0].then(function() {
-                            resolve();
-                            return;
-                        }).catch(reject);
+                        }])[0].then(resolve).catch(reject);
                     },
-                    function() {
-                        reject();
-                    }
+                    reject
                 );
-                return;
-            }).catch(reject);
+            });
         });
     }
 
@@ -240,15 +232,15 @@ define([
             }
             return;
         }).catch(function(error) {
-            var resultsArea = drawer.querySelector('.airesguide-results');
-            if (resultsArea) {
-                Str.get_string('error_generating', 'aiplacement_airesourceguide').then(function(errorMsg) {
-                    resultsArea.innerHTML = '<div class="alert alert-danger">' +
-                        '<i class="fa fa-exclamation-triangle mr-2"></i>' + errorMsg + '</div>';
-                    return;
-                }).catch(Notification.exception);
-            }
             Notification.exception(error);
+            var resultsArea = drawer.querySelector('.airesguide-results');
+            if (!resultsArea) {
+                return;
+            }
+            return Str.get_string('error_generating', 'aiplacement_airesourceguide').then(function(errorMsg) {
+                resultsArea.innerHTML = '<div class="alert alert-danger">' +
+                    '<i class="fa fa-exclamation-triangle mr-2"></i>' + errorMsg + '</div>';
+            }).catch(Notification.exception);
         });
     }
 });
