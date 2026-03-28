@@ -105,18 +105,30 @@ define([
             methodname: 'core_ai_get_policy_status',
             args: {userid: M.cfg.userId}
         }])[0].then(function(result) {
-            if (result.status) {
-                // Policy accepted, proceed.
-                openDrawer();
-                return;
-            }
-            // Show policy acceptance, then proceed.
-            return showPolicyModal().then(function() {
-                openDrawer();
-            }).catch(function() {
-                // User declined policy, do nothing.
-            });
+            handlePolicyResult(result.status);
+            return null;
         }).catch(Notification.exception);
+    }
+
+    /**
+     * Handle the policy check result.
+     *
+     * Opens the drawer immediately if already accepted, otherwise
+     * shows the policy modal first.
+     *
+     * @param {boolean} policyAccepted Whether the user has already accepted.
+     */
+    function handlePolicyResult(policyAccepted) {
+        if (policyAccepted) {
+            openDrawer();
+            return;
+        }
+        showPolicyModal().then(function() {
+            openDrawer();
+            return null;
+        }).catch(function() {
+            // User declined policy, do nothing.
+        });
     }
 
     /**
@@ -133,27 +145,35 @@ define([
             {key: 'aipolicy_point3', component: 'aiplacement_airesourceguide'},
             {key: 'accept', component: 'core'},
             {key: 'cancel', component: 'core'}
-        ]).then(function(strings) {
-            var message = strings[1] + '<br>' +
-                '1. ' + strings[2] + '<br>' +
-                '2. ' + strings[3] + '<br>' +
-                '3. ' + strings[4];
-            return new Promise(function(resolve, reject) {
-                Notification.confirm(
-                    strings[0],
-                    message,
-                    strings[5],
-                    strings[6],
-                    function() {
-                        // User accepted.
-                        Ajax.call([{
-                            methodname: 'core_ai_set_policy_status',
-                            args: {contextid: M.cfg.contextid, userid: M.cfg.userId}
-                        }])[0].then(resolve).catch(reject);
-                    },
-                    reject
-                );
-            });
+        ]).then(buildConfirmModal);
+    }
+
+    /**
+     * Build and display the policy confirmation modal.
+     *
+     * @param {Array} strings Resolved language strings.
+     * @return {Promise} Resolves when user accepts, rejects when declined.
+     */
+    function buildConfirmModal(strings) {
+        var message = strings[1] + '<br>' +
+            '1. ' + strings[2] + '<br>' +
+            '2. ' + strings[3] + '<br>' +
+            '3. ' + strings[4];
+        return new Promise(function(resolve, reject) {
+            Notification.confirm(
+                strings[0],
+                message,
+                strings[5],
+                strings[6],
+                function() {
+                    // User accepted — record policy status.
+                    Ajax.call([{
+                        methodname: 'core_ai_set_policy_status',
+                        args: {contextid: M.cfg.contextid, userid: M.cfg.userId}
+                    }])[0].then(resolve).catch(reject);
+                },
+                reject
+            );
         });
     }
 
@@ -214,13 +234,29 @@ define([
 
     /**
      * Fetch references from the web service.
+     *
+     * Pre-loads the error string so the catch handler stays promise-free.
      */
     function fetchReferences() {
+        Str.get_string('error_generating', 'aiplacement_airesourceguide')
+            .then(startReferenceFetch)
+            .catch(Notification.exception);
+    }
+
+    /**
+     * Execute the references Ajax call and render results.
+     *
+     * Receives the pre-loaded error string so it can display inline
+     * errors without starting a new promise chain inside the catch.
+     *
+     * @param {string} errorMsg Localised error message for inline display.
+     * @return {null}
+     */
+    function startReferenceFetch(errorMsg) {
         Ajax.call([{
             methodname: 'aiplacement_airesourceguide_get_references',
             args: {cmid: cmid}
         }])[0].then(function(response) {
-            // Render the results.
             return Templates.render('aiplacement_airesourceguide/results', {
                 concepts: response.concepts,
                 hasresults: response.concepts.length > 0
@@ -230,17 +266,15 @@ define([
             if (resultsArea) {
                 resultsArea.innerHTML = html;
             }
-            return;
-        }).catch(function(error) {
-            Notification.exception(error);
+            return null;
+        }).catch(function(ajaxError) {
+            Notification.exception(ajaxError);
             var resultsArea = drawer.querySelector('.airesguide-results');
-            if (!resultsArea) {
-                return;
-            }
-            return Str.get_string('error_generating', 'aiplacement_airesourceguide').then(function(errorMsg) {
+            if (resultsArea) {
                 resultsArea.innerHTML = '<div class="alert alert-danger">' +
                     '<i class="fa fa-exclamation-triangle mr-2"></i>' + errorMsg + '</div>';
-            }).catch(Notification.exception);
+            }
         });
+        return null;
     }
 });
