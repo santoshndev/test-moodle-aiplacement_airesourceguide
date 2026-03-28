@@ -26,6 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'aiplacement_airesourceguide';
 $plugin->version   = 2026031002;
-$plugin->requires  = 2024110800;
+$plugin->requires  = 2024100700;
 $plugin->maturity  = MATURITY_BETA;
 $plugin->release   = '1.0.0';
