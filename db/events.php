@@ -29,4 +29,8 @@ $observers = [
         'eventname'  => '\core\event\course_module_updated',
         'callback'   => '\aiplacement_airesourceguide\observer::course_module_updated',
     ],
+    [
+        'eventname'  => '\core\event\course_module_deleted',
+        'callback'   => '\aiplacement_airesourceguide\observer::course_module_deleted',
+    ],
 ];

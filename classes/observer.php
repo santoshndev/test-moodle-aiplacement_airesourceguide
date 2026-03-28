@@ -62,4 +62,29 @@ class observer {
             $cache->delete($cmid);
         }
     }
+
+    /**
+     * Delete cached references when a Page activity is deleted.
+     *
+     * Only acts on Page modules; ignores all other module types.
+     *
+     * @param \core\event\course_module_deleted $event The event instance.
+     * @return void
+     */
+    public static function course_module_deleted(\core\event\course_module_deleted $event): void {
+        $data = $event->get_data();
+        $other = $data['other'];
+
+        if ($other['modulename'] !== 'page') {
+            return;
+        }
+
+        $cmid = $data['objectid'];
+
+        $cache = \cache::make('aiplacement_airesourceguide', 'references');
+
+        if ($cache->get($cmid) !== false) {
+            $cache->delete($cmid);
+        }
+    }
 }
