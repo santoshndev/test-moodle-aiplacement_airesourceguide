@@ -67,7 +67,15 @@ class hook_listener {
             return;
         }
 
+        if (!\core\plugininfo\aiplacement::is_plugin_enabled('airesourceguide')) {
+            return;
+        }
+
         $manager = \core\di::get(\core_ai\manager::class);
+        if (!\core_ai\manager::is_action_enabled('aiplacement_airesourceguide', \core_ai\aiactions\generate_text::class)) {
+            return;
+        }
+
         if (!$manager->is_action_available(\core_ai\aiactions\generate_text::class)) {
             return;
         }
